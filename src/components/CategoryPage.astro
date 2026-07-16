@@ -1,0 +1,216 @@
+---
+interface CategoryItem {
+  label: string;
+  href: string;
+}
+
+interface CategoryGroup {
+  letter: string;
+  items: CategoryItem[];
+}
+
+interface Props {
+  title: string;
+  intro: string;
+  groups: CategoryGroup[];
+}
+
+const { title, intro, groups } = Astro.props;
+const letters = groups.map((g) => g.letter);
+---
+
+<main id="main" class="category-page">
+  <header class="category-hero">
+    <div class="category-hero__inner">
+      <p class="category-hero__eyebrow">Categorie</p>
+      <h1>{title}</h1>
+      <p class="category-hero__intro">{intro}</p>
+      {
+        letters.length > 0 && (
+          <nav class="category-alpha" aria-label="Alfabetische navigatie">
+            {letters.map((letter) => (
+              <a href={`#letter-${letter}`}>{letter}</a>
+            ))}
+          </nav>
+        )
+      }
+    </div>
+  </header>
+
+  <section class="category-list section" aria-label={`Producten in ${title}`}>
+    <div class="category-list__inner">
+      {
+        groups.map((group) => (
+          <div class="alpha-group" id={`letter-${group.letter}`}>
+            <h2>
+              <span>{group.letter}</span>
+            </h2>
+            <ul>
+              {group.items.map((item) => (
+                <li>
+                  <a href={item.href}>
+                    <span>{item.label}</span>
+                    <span class="alpha-group__arrow" aria-hidden="true">→</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</main>
+
+<style>
+  .category-page {
+    width: 100%;
+  }
+
+  .category-hero {
+    background:
+      radial-gradient(ellipse 70% 80% at 0% 0%, rgba(184, 247, 212, 0.4), transparent 55%),
+      radial-gradient(ellipse 60% 70% at 100% 20%, rgba(127, 166, 238, 0.22), transparent 50%),
+      #f4f7fb;
+    padding: clamp(2.5rem, 6vw, 4.5rem) 0 clamp(2rem, 4vw, 3rem);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .category-hero__inner {
+    width: min(100% - 2rem, 900px);
+    margin-inline: auto;
+  }
+
+  .category-hero__eyebrow {
+    margin: 0 0 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #3d6eb5;
+  }
+
+  .category-hero h1 {
+    margin-bottom: 1rem;
+    font-size: clamp(2rem, 4.5vw, 2.75rem);
+  }
+
+  .category-hero__intro {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    max-width: 62ch;
+  }
+
+  .category-alpha {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1.75rem;
+  }
+
+  .category-alpha a {
+    display: inline-grid;
+    place-items: center;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding: 0 0.5rem;
+    border-radius: 8px;
+    background: #fff;
+    border: 1px solid var(--color-border);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    transition:
+      background var(--transition),
+      border-color var(--transition),
+      color var(--transition),
+      transform var(--transition);
+  }
+
+  .category-alpha a:hover {
+    background: #4a7fd4;
+    border-color: #4a7fd4;
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  .category-list {
+    padding-block: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .category-list__inner {
+    width: min(100% - 2rem, 900px);
+    margin-inline: auto;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .alpha-group {
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(20, 40, 80, 0.04);
+  }
+
+  .alpha-group h2 {
+    margin: 0;
+    padding: 0.85rem 1.25rem;
+    background: linear-gradient(90deg, rgba(184, 247, 212, 0.55), rgba(127, 166, 238, 0.18));
+    border-bottom: 1px solid var(--color-border);
+    font-size: 1rem;
+  }
+
+  .alpha-group h2 span {
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 8px;
+    background: #0a0a0a;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .alpha-group ul {
+    list-style: none;
+    margin: 0;
+    padding: 0.35rem 0;
+  }
+
+  .alpha-group li a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1.25rem;
+    color: var(--color-text);
+    font-weight: 500;
+    text-transform: capitalize;
+    transition:
+      background var(--transition),
+      color var(--transition);
+  }
+
+  .alpha-group li + li a {
+    border-top: 1px solid #eef1f6;
+  }
+
+  .alpha-group li a:hover {
+    background: #f7f9fc;
+    color: #3d6eb5;
+  }
+
+  .alpha-group__arrow {
+    color: #9aa3b2;
+    font-size: 1rem;
+    transition: transform var(--transition), color var(--transition);
+  }
+
+  .alpha-group li a:hover .alpha-group__arrow {
+    color: #3d6eb5;
+    transform: translateX(3px);
+  }
+</style>

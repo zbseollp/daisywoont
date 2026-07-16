@@ -2,11 +2,15 @@
 interface Props {
   title?: string;
   description?: string;
+  bodyClass?: string;
+  stylesheets?: string[];
 }
 
 const {
   title = 'DaisyWoont.nl | Voor al jouw woontips!',
   description = 'Bij DaisyWoont.nl kun je terecht voor alle tips en trends op het gebied van wonen. Op zoek naar uniek interieur? Dan zit je hier goed.',
+  bodyClass = '',
+  stylesheets = [],
 } = Astro.props;
 ---
 
@@ -18,8 +22,9 @@ const {
     <meta name="description" content={description} />
     <link rel="icon" type="image/png" href="/images/cropped-Frame-32x32.png" />
     <title>{title}</title>
+    {stylesheets.map((href) => <link rel="stylesheet" href={href} />)}
   </head>
-  <body>
+  <body class={bodyClass || undefined}>
     <a href="#main" class="sr-only">Ga naar de inhoud</a>
     <slot />
   </body>

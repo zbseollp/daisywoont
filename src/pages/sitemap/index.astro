@@ -2,42 +2,540 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { getAllWpPages } from '../../utils/wp-pages';
 import { getCollection } from 'astro:content';
+import productPagesFromWp from '../../data/product-pages-from-wp.json';
+import categories from '../../data/categories.json';
 
-const pages = getAllWpPages();
 const posts = await getCollection('blog');
+
+const mainPages = [
+  { label: 'Home', href: '/', hint: 'Startpagina' },
+  { label: 'Blogs', href: '/blogs/', hint: 'Alle artikelen' },
+  { label: 'Contact', href: '/contact/', hint: 'Neem contact op' },
+  { label: 'Over ons', href: '/over-ons/', hint: 'Ons team' },
+  { label: 'Sitemap', href: '/sitemap/', hint: 'Deze pagina' },
+  ...categories.map((c) => ({
+    label: c.title,
+    href: `/${c.slug}/`,
+    hint: 'Productcategorie',
+  })),
+].sort((a, b) => a.label.localeCompare(b.label, 'nl'));
+
+const customPosts = [...productPagesFromWp]
+  .map((p) => ({
+    label: p.title.startsWith('Top 10') ? p.title : `Top 10 ${p.title}`,
+    href: `/${p.slug}/`,
+  }))
+  .sort((a, b) => a.label.localeCompare(b.label, 'nl'));
+
+function letterKey(label: string): string {
+  const cleaned = label.replace(/^Top 10\s+/i, '').trim();
+  const ch = cleaned.charAt(0).toUpperCase();
+  return /[0-9]/.test(ch) ? ch : ch.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+const productGroups = new Map<string, typeof customPosts>();
+for (const item of customPosts) {
+  const key = letterKey(item.label);
+  const list = productGroups.get(key) ?? [];
+  list.push(item);
+  productGroups.set(key, list);
+}
+const productLetters = [...productGroups.keys()].sort((a, b) => {
+  if (/[0-9]/.test(a) && !/[0-9]/.test(b)) return -1;
+  if (!/[0-9]/.test(a) && /[0-9]/.test(b)) return 1;
+  return a.localeCompare(b, 'nl');
+});
+
+const postsByCategory = new Map<string, typeof posts>();
+for (const post of posts) {
+  const cats = post.data.categories.length ? post.data.categories : ['Uncategorized'];
+  for (const cat of cats) {
+    const list = postsByCategory.get(cat) ?? [];
+    list.push(post);
+    postsByCategory.set(cat, list);
+  }
+}
+const categoryNames = [...postsByCategory.keys()].sort((a, b) => a.localeCompare(b, 'nl'));
+
+const stats = [
+  { value: String(mainPages.length), label: 'Pagina’s' },
+  { value: String(customPosts.length), label: 'Top 10’s' },
+  { value: String(posts.length), label: 'Blogs' },
+];
 ---
 
-<Layout title="Sitemap | DaisyWoont.nl" description="Overzicht van alle pagina's op DaisyWoont.nl">
+<Layout
+  title="Sitemap | DaisyWoont.nl"
+  description="Overzicht van alle pagina's, top 10 producten en blogs op DaisyWoont.nl."
+>
   <Header />
-  <main id="main" class="section">
-    <div class="container">
-      <h1>Sitemap</h1>
-      <h2>Pagina's</h2>
-      <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/blog/">Blog</a></li>
-        <li><a href="/over-ons/">Over ons</a></li>
-        <li><a href="/contact/">Contact</a></li>
-        {pages.map((p) => (
-          <li><a href={`/${p.slug}/`}>{p.title}</a></li>
-        ))}
-      </ul>
-      <h2>Blog artikelen</h2>
-      <ul>
-        {posts.map((post) => (
-          <li><a href={`/blog/${post.id}/`}>{post.data.title}</a></li>
-        ))}
-      </ul>
+  <main id="main" class="sitemap-page">
+    <header class="sitemap-hero">
+      <div class="sitemap-hero__inner">
+        <p class="sitemap-hero__eyebrow">Overzicht</p>
+        <h1>Sitemap</h1>
+        <p class="sitemap-hero__lead">
+          Vind snel alle pagina’s, productreviews en blogs van DaisyWoont.nl.
+        </p>
+
+        <div class="sitemap-stats">
+          {
+            stats.map((stat) => (
+              <div class="sitemap-stats__item">
+                <strong>{stat.value}</strong>
+                <span>{stat.label}</span>
+              </div>
+            ))
+          }
+        </div>
+
+        <nav class="sitemap-jump" aria-label="Snel naar sectie">
+          <a href="#sitemap-pages">Pagina's</a>
+          <a href="#sitemap-products">Custom Posts</a>
+          <a href="#sitemap-posts">Blogs</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="sitemap-body">
+      <section class="sitemap-panel" id="sitemap-pages" aria-labelledby="sitemap-pages-title">
+        <div class="sitemap-panel__head">
+          <h2 id="sitemap-pages-title">Pagina's</h2>
+          <p>Hoofdpagina’s en categorieën</p>
+        </div>
+        <div class="sitemap-cards">
+          {
+            mainPages.map((item) => (
+              <a class="sitemap-card" href={item.href}>
+                <span class="sitemap-card__title">{item.label}</span>
+                <span class="sitemap-card__hint">{item.hint}</span>
+                <span class="sitemap-card__go" aria-hidden="true">→</span>
+              </a>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="sitemap-panel" id="sitemap-products" aria-labelledby="sitemap-products-title">
+        <div class="sitemap-panel__head">
+          <h2 id="sitemap-products-title">Custom Posts</h2>
+          <p>{customPosts.length} top 10 productpagina’s, alfabetisch</p>
+        </div>
+
+        <nav class="sitemap-alpha" aria-label="Alfabetische productnavigatie">
+          {
+            productLetters.map((letter) => (
+              <a href={`#products-${letter}`}>{letter}</a>
+            ))
+          }
+        </nav>
+
+        <div class="sitemap-groups">
+          {
+            productLetters.map((letter) => (
+              <div class="sitemap-group" id={`products-${letter}`}>
+                <h3>
+                  <span>{letter}</span>
+                </h3>
+                <ul>
+                  {(productGroups.get(letter) ?? []).map((item) => (
+                    <li>
+                      <a href={item.href}>
+                        <span>{item.label}</span>
+                        <span aria-hidden="true">→</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="sitemap-panel" id="sitemap-posts" aria-labelledby="sitemap-posts-title">
+        <div class="sitemap-panel__head">
+          <h2 id="sitemap-posts-title">Berichten per categorie</h2>
+          <p>Alle blogartikelen gegroepeerd op categorie</p>
+        </div>
+
+        <div class="sitemap-blog-cats">
+          {
+            categoryNames.map((cat) => {
+              const items = (postsByCategory.get(cat) ?? []).sort((a, b) =>
+                a.data.title.localeCompare(b.data.title, 'nl')
+              );
+              return (
+                <div class="sitemap-blog-cat">
+                  <h3>
+                    Categorie: {cat}
+                    <span>{items.length}</span>
+                  </h3>
+                  <ul>
+                    {items.map((post) => (
+                      <li>
+                        <a href={`/${post.id}/`}>
+                          <span>{post.data.title}</span>
+                          <span aria-hidden="true">→</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })
+          }
+        </div>
+      </section>
     </div>
   </main>
   <Footer />
 </Layout>
 
 <style>
-  h1 { margin-bottom: 1.5rem; }
-  h2 { margin: 2rem 0 1rem; font-size: 1.125rem; }
-  ul { display: grid; gap: 0.35rem; padding-left: 1.25rem; }
-  a { color: var(--color-accent); text-decoration: underline; }
+  .sitemap-page {
+    width: 100%;
+    background: #f6f8fc;
+  }
+
+  .sitemap-hero {
+    background:
+      radial-gradient(ellipse 80% 70% at 0% 0%, rgba(184, 247, 212, 0.5), transparent 55%),
+      radial-gradient(ellipse 70% 60% at 100% 10%, rgba(127, 166, 238, 0.28), transparent 52%),
+      linear-gradient(180deg, #eef3fa 0%, #f6f8fc 100%);
+    padding: clamp(2.75rem, 7vw, 4.75rem) 0 clamp(2rem, 4vw, 3rem);
+    border-bottom: 1px solid #e4eaf3;
+  }
+
+  .sitemap-hero__inner {
+    width: min(100% - 2rem, 1080px);
+    margin-inline: auto;
+  }
+
+  .sitemap-hero__eyebrow {
+    margin: 0 0 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #3d6eb5;
+  }
+
+  .sitemap-hero h1 {
+    margin: 0 0 0.65rem;
+    font-size: clamp(2.25rem, 5vw, 3rem);
+  }
+
+  .sitemap-hero__lead {
+    margin: 0;
+    max-width: 40ch;
+    color: var(--color-muted);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+  }
+
+  .sitemap-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+    max-width: 420px;
+  }
+
+  .sitemap-stats__item {
+    background: #fff;
+    border: 1px solid #e4eaf3;
+    border-radius: 12px;
+    padding: 0.85rem 0.75rem;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(20, 40, 80, 0.04);
+  }
+
+  .sitemap-stats__item strong {
+    display: block;
+    font-size: 1.35rem;
+    color: #0a0a0a;
+    line-height: 1.1;
+  }
+
+  .sitemap-stats__item span {
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    font-weight: 500;
+  }
+
+  .sitemap-jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .sitemap-jump a {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.55rem 0.95rem;
+    border-radius: 999px;
+    background: #0a0a0a;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition:
+      transform var(--transition),
+      background var(--transition);
+  }
+
+  .sitemap-jump a:hover {
+    background: #4a7fd4;
+    transform: translateY(-1px);
+  }
+
+  .sitemap-body {
+    width: min(100% - 2rem, 1080px);
+    margin-inline: auto;
+    padding-block: clamp(2rem, 5vw, 3.5rem);
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .sitemap-panel {
+    background: #fff;
+    border: 1px solid #e4eaf3;
+    border-radius: 18px;
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+    box-shadow: 0 10px 30px rgba(20, 40, 80, 0.05);
+  }
+
+  .sitemap-panel__head {
+    margin-bottom: 1.25rem;
+  }
+
+  .sitemap-panel__head h2 {
+    margin: 0 0 0.25rem;
+    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+  }
+
+  .sitemap-panel__head p {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 0.9375rem;
+  }
+
+  .sitemap-cards {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .sitemap-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 960px) {
+    .sitemap-cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .sitemap-card {
+    position: relative;
+    display: grid;
+    gap: 0.2rem;
+    padding: 1rem 1.1rem 1rem 1.15rem;
+    border-radius: 14px;
+    border: 1px solid #e8edf5;
+    background: linear-gradient(180deg, #fbfcfe 0%, #f5f8fc 100%);
+    transition:
+      border-color var(--transition),
+      transform var(--transition),
+      box-shadow var(--transition);
+  }
+
+  .sitemap-card:hover {
+    border-color: #7fa6ee;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(74, 127, 212, 0.12);
+  }
+
+  .sitemap-card__title {
+    font-weight: 600;
+    color: #0a0a0a;
+    padding-right: 1.5rem;
+  }
+
+  .sitemap-card__hint {
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+  }
+
+  .sitemap-card__go {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: #7fa6ee;
+    transition: transform var(--transition);
+  }
+
+  .sitemap-card:hover .sitemap-card__go {
+    transform: translateX(3px);
+  }
+
+  .sitemap-alpha {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .sitemap-alpha a {
+    display: inline-grid;
+    place-items: center;
+    min-width: 2.15rem;
+    height: 2.15rem;
+    padding: 0 0.45rem;
+    border-radius: 8px;
+    border: 1px solid #e4eaf3;
+    background: #f7f9fc;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #0a0a0a;
+    transition:
+      background var(--transition),
+      border-color var(--transition),
+      color var(--transition);
+  }
+
+  .sitemap-alpha a:hover {
+    background: #4a7fd4;
+    border-color: #4a7fd4;
+    color: #fff;
+  }
+
+  .sitemap-groups {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .sitemap-group {
+    border: 1px solid #e8edf5;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .sitemap-group h3 {
+    margin: 0;
+    padding: 0.7rem 1rem;
+    background: linear-gradient(90deg, rgba(184, 247, 212, 0.5), rgba(127, 166, 238, 0.16));
+    border-bottom: 1px solid #e8edf5;
+    font-size: 0.95rem;
+  }
+
+  .sitemap-group h3 span {
+    display: inline-grid;
+    place-items: center;
+    width: 1.85rem;
+    height: 1.85rem;
+    border-radius: 7px;
+    background: #0a0a0a;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .sitemap-group ul,
+  .sitemap-blog-cat ul {
+    list-style: none;
+    margin: 0;
+    padding: 0.25rem 0;
+  }
+
+  .sitemap-group li a,
+  .sitemap-blog-cat li a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    color: #1a1a1a;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition:
+      background var(--transition),
+      color var(--transition);
+  }
+
+  .sitemap-group li + li a,
+  .sitemap-blog-cat li + li a {
+    border-top: 1px solid #eef2f7;
+  }
+
+  .sitemap-group li a:hover,
+  .sitemap-blog-cat li a:hover {
+    background: #f5f8fc;
+    color: #2f5fa8;
+  }
+
+  .sitemap-group li a span:last-child,
+  .sitemap-blog-cat li a span:last-child {
+    color: #9aa3b2;
+    transition: transform var(--transition), color var(--transition);
+  }
+
+  .sitemap-group li a:hover span:last-child,
+  .sitemap-blog-cat li a:hover span:last-child {
+    color: #2f5fa8;
+    transform: translateX(3px);
+  }
+
+  @media (min-width: 900px) {
+    .sitemap-group ul {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .sitemap-group li:nth-child(2n) a {
+      border-left: 1px solid #eef2f7;
+    }
+
+    .sitemap-group li:nth-child(2) a {
+      border-top: 0;
+    }
+  }
+
+  .sitemap-blog-cats {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .sitemap-blog-cat {
+    border: 1px solid #e8edf5;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .sitemap-blog-cat h3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0;
+    padding: 0.85rem 1rem;
+    background: #f7f9fc;
+    border-bottom: 1px solid #e8edf5;
+    font-size: 1rem;
+  }
+
+  .sitemap-blog-cat h3 span {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.75rem;
+    height: 1.75rem;
+    padding: 0 0.4rem;
+    border-radius: 999px;
+    background: #4a7fd4;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
 </style>

@@ -1,3 +1,160 @@
 ---
-return Astro.redirect('/blog/');
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection } from 'astro:content';
+import { formatDate } from '../../utils/format';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
 ---
+
+<Layout
+  title="Blogs | DaisyWoont.nl"
+  description="Ontdek alle blogs over wonen, interieur en woontips op DaisyWoont.nl."
+>
+  <Header />
+  <main id="main" class="blog-page">
+    <section class="blog-hero section">
+      <div class="container">
+        <h1>Blogs</h1>
+        <p>
+          Onze bloggers hebben een passie voor interieur en delen graag hun inzichten met jou. Ontdek
+          alle artikelen over wonen, trends en stylingadvies.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="blog-grid">
+          {
+            posts.map((post) => (
+              <article class="blog-card">
+                <a href={`/${post.id}/`} class="blog-card__link">
+                  {post.data.featuredImage && (
+                    <div class="blog-card__image">
+                      <img
+                        src={post.data.featuredImage}
+                        alt={post.data.title}
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
+                  <div class="blog-card__body">
+                    {post.data.categories[0] && <span class="tag">{post.data.categories[0]}</span>}
+                    <h2>{post.data.title}</h2>
+                    <p>{post.data.description}</p>
+                    <time datetime={post.data.pubDate.toISOString()}>
+                      {formatDate(post.data.pubDate)}
+                    </time>
+                    <span class="blog-card__cta">Lees verder →</span>
+                  </div>
+                </a>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .blog-hero {
+    background: var(--color-bg-soft);
+    padding-bottom: 1rem;
+  }
+
+  .blog-hero p {
+    color: var(--color-muted);
+    max-width: 560px;
+  }
+
+  .blog-grid {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .blog-card {
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #fff;
+    box-shadow: var(--shadow);
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+
+  .blog-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .blog-card__link {
+    display: grid;
+    height: 100%;
+  }
+
+  .blog-card__image {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .blog-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .blog-card:hover .blog-card__image img {
+    transform: scale(1.05);
+  }
+
+  .blog-card__body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .blog-card__body h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .blog-card__body p {
+    font-size: 0.9375rem;
+    color: var(--color-muted);
+    flex: 1;
+  }
+
+  .blog-card__body time {
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+    margin-top: 0.75rem;
+  }
+
+  .blog-card__cta {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-accent);
+  }
+
+  @media (min-width: 640px) {
+    .blog-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .blog-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .blog-card__link {
+      grid-template-rows: auto 1fr;
+    }
+  }
+</style>

@@ -2,26 +2,143 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import BlogPost from '../../components/BlogPost.astro';
+import CategoryPage from '../../components/CategoryPage.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import { getAllWpPages } from '../../utils/wp-pages';
+import categories from '../../data/categories.json';
 
-export function getStaticPaths() {
-  return getAllWpPages().map((page) => ({ params: { slug: page.slug } }));
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return [
+    ...getAllWpPages().map((page) => ({
+      params: { slug: page.slug },
+      props: { kind: 'page' as const, page },
+    })),
+    ...posts.map((post) => ({
+      params: { slug: post.id },
+      props: { kind: 'post' as const, post },
+    })),
+  ];
 }
 
-const { slug } = Astro.params;
-const page = getAllWpPages().find((p) => p.slug === slug);
-if (!page) throw new Error(`Page not found: ${slug}`);
+type Props =
+  | { kind: 'page'; page: ReturnType<typeof getAllWpPages>[number] }
+  | { kind: 'post'; post: CollectionEntry<'blog'> };
 
-const plainText = page.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+const props = Astro.props as Props;
+
+const isBlogPost = props.kind === 'post';
+const page = !isBlogPost ? props.page : null;
+const post = isBlogPost ? props.post : null;
+
+const category = page ? categories.find((c) => c.slug === page.slug) : undefined;
+const isProductPage = Boolean(page?.content.includes('elementor-131'));
+const plainText = page
+  ? page.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+  : '';
+
+const productStylesheets = [
+  '/styles/elementor/epilogue.css',
+  '/styles/elementor/poppins.css',
+  '/styles/elementor/frontend.min.css',
+  '/styles/elementor/widget-image.min.css',
+  '/styles/elementor/widget-heading.min.css',
+  '/styles/elementor/widget-star-rating.min.css',
+  '/styles/elementor/widget-accordion.min.css',
+  '/styles/elementor/widget-spacer.min.css',
+  '/styles/elementor/widget-breadcrumbs.min.css',
+  '/styles/elementor/widget-table-of-contents.min.css',
+  '/styles/elementor/elementor-icons.min.css',
+  '/styles/elementor/fontawesome.min.css',
+  '/styles/elementor/solid.min.css',
+  '/styles/elementor/post-335.css',
+  '/styles/elementor/post-131.css',
+];
+
+const seoTitle = page
+  ? isProductPage
+    ? `${page.title} | BESTE ${page.title.replace(/^Top 10\s+/i, '')}`
+    : `${page.title} | DaisyWoont.nl`
+  : '';
+
+const seoDescription = category?.description || plainText.slice(0, 160);
 ---
 
-<Layout title={`${page.title} | DaisyWoont.nl`} description={plainText.slice(0, 160)}>
-  <Header />
-  <main id="main" class="page-content section">
-    <div class="container wp-content" set:html={page.content} />
-  </main>
-  <Footer />
-</Layout>
+{
+  post ? (
+    <BlogPost post={post} />
+  ) : page && category ? (
+    <Layout title={seoTitle} description={seoDescription}>
+      <Header />
+      <CategoryPage title={category.title} intro={category.intro} groups={category.groups} />
+      <Footer />
+    </Layout>
+  ) : page ? (
+    <Layout
+      title={seoTitle}
+      description={seoDescription}
+      bodyClass={isProductPage ? 'elementor-kit-335 elementor-page elementor-page-131' : undefined}
+      stylesheets={isProductPage ? productStylesheets : []}
+    >
+      <Header />
+      {
+        isProductPage ? (
+          <main id="main" class="product-page">
+            <div class="elementor-bc-flex-widget" set:html={page.content} />
+          </main>
+        ) : (
+          <main id="main" class="page-content section">
+            <div class="container wp-content" set:html={page.content} />
+          </main>
+        )
+      }
+      <Footer />
+    </Layout>
+  ) : null
+}
+
+{
+  isProductPage && page && (
+    <>
+      <script is:inline src="/scripts/elementor-toc.js"></script>
+      <script>
+        document.querySelectorAll('.elementor-accordion').forEach((accordion) => {
+          accordion.querySelectorAll('.elementor-tab-title').forEach((title) => {
+            title.addEventListener('click', () => {
+              const item = title.closest('.elementor-accordion-item');
+              const content = item?.querySelector('.elementor-tab-content');
+              const open = title.classList.contains('elementor-active');
+
+              accordion.querySelectorAll('.elementor-tab-title').forEach((t) => {
+                t.classList.remove('elementor-active');
+                t.setAttribute('aria-expanded', 'false');
+              });
+              accordion.querySelectorAll('.elementor-tab-content').forEach((c) => {
+                c.classList.remove('elementor-active');
+                c.setAttribute('hidden', '');
+                c.style.display = 'none';
+              });
+
+              if (!open && item && content) {
+                title.classList.add('elementor-active');
+                title.setAttribute('aria-expanded', 'true');
+                content.classList.add('elementor-active');
+                content.removeAttribute('hidden');
+                content.style.display = 'block';
+              }
+            });
+          });
+
+          accordion.querySelectorAll('.elementor-tab-content').forEach((c) => {
+            c.setAttribute('hidden', '');
+            c.style.display = 'none';
+          });
+        });
+      </script>
+    </>
+  )
+}
 
 <style>
   .page-content .container {
@@ -54,5 +171,134 @@ const plainText = page.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').tri
   .wp-content :global(ol) {
     margin-bottom: 1rem;
     padding-left: 1.25rem;
+  }
+
+  /* Product / Elementor pages — avoid global layout conflicts */
+  .product-page {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    max-width: none;
+  }
+
+  .product-page :global(.elementor-section.elementor-section-boxed > .elementor-container) {
+    max-width: 1140px;
+  }
+
+  .product-page :global(img) {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Neutralize global.css heading/paragraph overrides inside Elementor */
+  .product-page :global(.elementor h1),
+  .product-page :global(.elementor h2),
+  .product-page :global(.elementor h3),
+  .product-page :global(.elementor h4) {
+    margin: 0;
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+  }
+
+  .product-page :global(.elementor p) {
+    margin: 0 0 1em;
+    color: inherit;
+  }
+
+  .product-page :global(.elementor a) {
+    text-decoration: none;
+  }
+
+  /* zb_mp breadcrumb list from top-10 plugin */
+  .product-page :global(.zbmp-breadcrumb) {
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .product-page :global(.zbmp-breadcrumb a) {
+    color: #6fe7db;
+  }
+
+  /* TOC: keep numbers and titles on one line, nested counters aligned */
+  .product-page :global(.elementor-toc__list-item-text-wrapper) {
+    align-items: flex-start;
+    display: flex;
+    gap: 0;
+  }
+
+  .product-page :global(ol.elementor-toc__list-wrapper .elementor-toc__list-item-text-wrapper:before) {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    line-height: inherit;
+  }
+
+  .product-page :global(.elementor-toc__list-item-text) {
+    flex: 1 1 auto;
+    min-width: 0;
+    line-height: 1.45;
+  }
+
+  .product-page :global(.elementor-toc__header) {
+    cursor: pointer;
+  }
+
+  .product-page :global(.elementor-toc__spinner-container) {
+    display: none;
+  }
+
+  /* FAQ accordion +/- icons (Font Awesome solid + teal color from live site) */
+  .product-page :global(.elementor-accordion .elementor-accordion-icon) {
+    display: inline-block;
+    width: 1.5em;
+    color: #6fe7db;
+    font-size: 1em;
+    line-height: 1;
+  }
+
+  .product-page :global(.elementor-accordion .elementor-accordion-icon.elementor-accordion-icon-right) {
+    float: right;
+    text-align: right;
+  }
+
+  .product-page :global(.elementor-accordion .elementor-accordion-icon .fas),
+  .product-page :global(.elementor-accordion .elementor-accordion-icon i) {
+    font-family: "Font Awesome 5 Free" !important;
+    font-weight: 900 !important;
+    font-style: normal !important;
+    color: #6fe7db !important;
+    speak: never;
+    display: inline-block;
+  }
+
+  .product-page :global(.elementor-accordion .elementor-accordion-icon .fa-plus:before),
+  .product-page :global(.elementor-accordion .fa-plus:before) {
+    content: "\f067" !important;
+    color: #6fe7db !important;
+  }
+
+  .product-page :global(.elementor-accordion .elementor-accordion-icon .fa-minus:before),
+  .product-page :global(.elementor-accordion .fa-minus:before) {
+    content: "\f068" !important;
+    color: #6fe7db !important;
+  }
+
+  .product-page :global(.elementor-accordion .elementor-tab-title .elementor-accordion-icon-closed) {
+    display: block;
+  }
+
+  .product-page :global(.elementor-accordion .elementor-tab-title .elementor-accordion-icon-opened),
+  .product-page :global(.elementor-accordion .elementor-tab-title.elementor-active .elementor-accordion-icon-closed) {
+    display: none;
+  }
+
+  .product-page :global(.elementor-accordion .elementor-tab-title.elementor-active .elementor-accordion-icon-opened) {
+    display: block;
   }
 </style>

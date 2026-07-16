@@ -1,8 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
-import Contact from '../../components/Contact.astro';
 import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
 ---
 
 <Layout
@@ -10,8 +10,366 @@ import Footer from '../../components/Footer.astro';
   description="Neem contact op met DaisyWoont.nl voor al jouw vragen. Wil je een samenwerking met ons aangaan? We horen graag van je!"
 >
   <Header />
-  <main id="main">
-    <Contact fullPage={true} />
+  <main id="main" class="contact-page">
+    <PageHero
+      title="Contact"
+      paragraphs={[
+        'Wil jij samenwerken met DaisyWoont.nl of heb jij vragen voor de redactie?',
+        'Neem gerust contact op met ons door middel van het onderstaand contactformulier in te vullen. We doen ons best om je vraag zo snel mogelijk te beantwoorden.',
+      ]}
+      imageAlt="Contactpersoon van DaisyWoont.nl"
+    />
+
+    <section class="contact-panel" aria-labelledby="contact-form-title">
+      <div class="contact-panel__inner">
+        <div class="contact-panel__intro">
+          <p class="contact-panel__eyebrow">Reactie binnen 1–2 werkdagen</p>
+          <h2 id="contact-form-title">Stuur ons een bericht</h2>
+          <p>
+            Heb je een vraag over een productreview, wil je samenwerken, of zoek je advies over wonen
+            en interieur? Vul het formulier in — we helpen je graag verder.
+          </p>
+
+          <ul class="contact-panel__details">
+            <li>
+              <span class="contact-panel__icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.75"></rect>
+                  <path d="M3 7l9 6 9-6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"></path>
+                </svg>
+              </span>
+              <div>
+                <strong>E-mail</strong>
+                <a href="mailto:info@daisywoont.nl">info@daisywoont.nl</a>
+              </div>
+            </li>
+            <li>
+              <span class="contact-panel__icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.75"></circle>
+                  <path
+                    d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9s1.3-6.3 3.8-9z"
+                    stroke="currentColor"
+                    stroke-width="1.75"></path>
+                </svg>
+              </span>
+              <div>
+                <strong>Website</strong>
+                <a href="https://daisywoont.nl">daisywoont.nl</a>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <form class="contact-form" id="contact-form" action="#" method="post">
+          <div class="contact-form__row">
+            <div class="contact-form__field">
+              <label for="contact-name">Naam</label>
+              <input
+                id="contact-name"
+                name="naam"
+                type="text"
+                placeholder="Je naam"
+                autocomplete="name"
+                required
+              />
+            </div>
+            <div class="contact-form__field">
+              <label for="contact-email">E-mail</label>
+              <input
+                id="contact-email"
+                name="email"
+                type="email"
+                placeholder="naam@email.nl"
+                autocomplete="email"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="contact-form__field">
+            <label for="contact-message">Bericht</label>
+            <textarea
+              id="contact-message"
+              name="bericht"
+              rows="6"
+              placeholder="Waar kunnen we je mee helpen?"
+              required></textarea>
+          </div>
+
+          <button type="submit" class="contact-form__submit">
+            Verzenden
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M5 12h14M13 6l6 6-6 6"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
+            </svg>
+          </button>
+
+          <p class="contact-form__success" id="contact-success" hidden>
+            Bedankt! Je bericht is klaargezet. Mail ons op
+            <a href="mailto:info@daisywoont.nl">info@daisywoont.nl</a>
+            als je het liever direct wilt versturen.
+          </p>
+        </form>
+      </div>
+    </section>
   </main>
   <Footer />
 </Layout>
+
+<style>
+  .contact-page {
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .contact-panel {
+    position: relative;
+    padding: clamp(3rem, 7vw, 5.5rem) 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 0%, rgba(184, 247, 212, 0.35), transparent 55%),
+      radial-gradient(ellipse 70% 50% at 100% 100%, rgba(127, 166, 238, 0.18), transparent 50%),
+      #f4f7fb;
+  }
+
+  .contact-panel__inner {
+    width: min(100% - 2rem, 1080px);
+    margin-inline: auto;
+    display: grid;
+    gap: clamp(2rem, 5vw, 3.5rem);
+    align-items: start;
+  }
+
+  .contact-panel__eyebrow {
+    display: inline-block;
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #3d6eb5;
+  }
+
+  .contact-panel__intro h2 {
+    margin-bottom: 0.75rem;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .contact-panel__intro > p {
+    color: var(--color-muted);
+    max-width: 36ch;
+    margin-bottom: 1.75rem;
+  }
+
+  .contact-panel__details {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .contact-panel__details li {
+    display: flex;
+    gap: 0.875rem;
+    align-items: flex-start;
+  }
+
+  .contact-panel__icon {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: #fff;
+    color: #4a7fd4;
+    box-shadow: 0 2px 10px rgba(10, 10, 10, 0.06);
+  }
+
+  .contact-panel__details strong {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-bottom: 0.15rem;
+  }
+
+  .contact-panel__details a {
+    color: var(--color-primary);
+    font-weight: 500;
+    transition: color var(--transition);
+  }
+
+  .contact-panel__details a:hover {
+    color: #4a7fd4;
+  }
+
+  .contact-form {
+    display: grid;
+    gap: 1.15rem;
+    padding: clamp(1.5rem, 4vw, 2.25rem);
+    background: #fff;
+    border: 1px solid rgba(232, 236, 242, 0.9);
+    border-radius: 16px;
+    box-shadow: 0 16px 48px rgba(20, 40, 80, 0.08);
+  }
+
+  .contact-form__row {
+    display: grid;
+    gap: 1.15rem;
+  }
+
+  .contact-form__field {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .contact-form__field label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+
+  .contact-form__field input,
+  .contact-form__field textarea {
+    width: 100%;
+    margin: 0;
+    padding: 0.85rem 1rem;
+    border: 1.5px solid var(--color-border);
+    border-radius: 10px;
+    background: #fbfcfe;
+    font-family: inherit;
+    font-size: 0.975rem;
+    color: var(--color-text);
+    transition:
+      border-color var(--transition),
+      box-shadow var(--transition),
+      background var(--transition);
+  }
+
+  .contact-form__field textarea {
+    resize: vertical;
+    min-height: 140px;
+    line-height: 1.55;
+  }
+
+  .contact-form__field input::placeholder,
+  .contact-form__field textarea::placeholder {
+    color: #9aa3b2;
+  }
+
+  .contact-form__field input:hover,
+  .contact-form__field textarea:hover {
+    border-color: #c9d4e6;
+  }
+
+  .contact-form__field input:focus,
+  .contact-form__field textarea:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(127, 166, 238, 0.2);
+  }
+
+  .contact-form__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    margin-top: 0.25rem;
+    padding: 0.95rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #6b97e6 0%, #4a7fd4 100%);
+    color: #fff;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      transform var(--transition),
+      box-shadow var(--transition),
+      filter var(--transition);
+    box-shadow: 0 8px 20px rgba(74, 127, 212, 0.28);
+  }
+
+  .contact-form__submit:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.04);
+    box-shadow: 0 12px 28px rgba(74, 127, 212, 0.35);
+  }
+
+  .contact-form__submit:active {
+    transform: translateY(0);
+  }
+
+  .contact-form__success {
+    margin: 0;
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    background: rgba(184, 247, 212, 0.45);
+    color: #1a3d2e;
+    font-size: 0.9375rem;
+  }
+
+  .contact-form__success a {
+    color: #1a3d2e;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  @media (min-width: 768px) {
+    .contact-form__row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .contact-panel__inner {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 3.5rem;
+    }
+
+    .contact-form__submit {
+      width: auto;
+      justify-self: start;
+      min-width: 200px;
+    }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('contact-form');
+  const success = document.getElementById('contact-success');
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const nameInput = document.getElementById('contact-name');
+    const emailInput = document.getElementById('contact-email');
+    const messageInput = document.getElementById('contact-message');
+    if (
+      !(nameInput instanceof HTMLInputElement) ||
+      !(emailInput instanceof HTMLInputElement) ||
+      !(messageInput instanceof HTMLTextAreaElement)
+    ) {
+      return;
+    }
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const message = messageInput.value.trim();
+    const subject = encodeURIComponent(`Contact via DaisyWoont.nl — ${name}`);
+    const body = encodeURIComponent(`Naam: ${name}\nE-mail: ${email}\n\n${message}`);
+    window.location.href = `mailto:info@daisywoont.nl?subject=${subject}&body=${body}`;
+    success?.removeAttribute('hidden');
+    form.reset();
+  });
+</script>

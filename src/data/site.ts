@@ -24,7 +24,7 @@ function mapNav(items: typeof navFromWp): NavItem[] {
 }
 
 export const navItems = mapNav(navFromWp).map((item) => {
-  if (item.label === 'Blogs') return { ...item, href: '/blog/' };
+  if (item.label === 'Blogs') return { ...item, href: '/blogs/' };
   return item;
 });
 
@@ -47,7 +47,7 @@ export const newsArticles = [
       'Bijzettafels vormen een essentieel en veelzijdig element in het interieurontwerp, waardoor ze een waardevolle aanvulling zijn op verschillende ruimtes in huis.',
     image: '/images/listerby-coffee-table-oak-veneer__1022538_pe832796_s5.jpg',
     alt: 'Houten bijzettafel in een gezellige woonkamer',
-    href: '/blog/zo-creeer-je-jouw-droominterieur-tips-woontrends-en-stylingadvies/',
+    href: '/zo-creeer-je-jouw-droominterieur-tips-woontrends-en-stylingadvies/',
   },
   {
     category: 'Verwarmers & Koelers',
@@ -55,7 +55,7 @@ export const newsArticles = [
     excerpt: 'Ontdek compacte houtkachels die warmte en sfeer toevoegen aan elke ruimte in huis.',
     image: '/images/radiator-1.jpg',
     alt: 'Moderne radiator en verwarming in interieur',
-    href: '/blog/zo-maak-jij-je-huis-klaar-voor-de-toekomst/',
+    href: '/zo-maak-jij-je-huis-klaar-voor-de-toekomst/',
   },
   {
     category: 'Meubilair',
@@ -63,7 +63,7 @@ export const newsArticles = [
     excerpt: 'Een veelzijdige slaapbank combineert comfortabel zitten met een praktische slaapoplossing voor gasten.',
     image: '/images/slaapkamer.jpg',
     alt: 'Stijlvolle slaapkamer met moderne meubels',
-    href: '/blog/zo-creeer-je-jouw-droominterieur-tips-woontrends-en-stylingadvies/',
+    href: '/zo-creeer-je-jouw-droominterieur-tips-woontrends-en-stylingadvies/',
   },
 ];
 
@@ -74,7 +74,7 @@ export const blogHighlights = [
     excerpt: 'Bespaar water zonder in te leveren op comfort met een moderne douchekop.',
     image: '/images/douche.jpg',
     alt: 'Moderne badkamer met waterbesparende douche',
-    href: '/blog/wandsieraad-ophangen-stijlvolle-decoratie-voor-uw-interieur/',
+    href: '/wandsieraad-ophangen-stijlvolle-decoratie-voor-uw-interieur/',
   },
   {
     category: 'Slaapkamer',
@@ -82,7 +82,7 @@ export const blogHighlights = [
     excerpt: 'Combineer luxe slaapcomfort met slimme technologie in je slaapkamer.',
     image: '/images/slaapkamer.jpg',
     alt: 'Slaapkamer met boxspring bed',
-    href: '/blog/zo-creeer-je-jouw-droominterieur-tips-woontrends-en-stylingadvies/',
+    href: '/zo-creeer-je-jouw-droominterieur-tips-woontrends-en-stylingadvies/',
   },
   {
     category: 'Verwarmers & Koelers',
@@ -90,7 +90,7 @@ export const blogHighlights = [
     excerpt: 'Efficiënte en comfortabele verwarming voor een aangenaam binnenklimaat.',
     image: '/images/radiator-1.jpg',
     alt: 'Infrarood verwarming paneel aan muur',
-    href: '/blog/zo-maak-jij-je-huis-klaar-voor-de-toekomst/',
+    href: '/zo-maak-jij-je-huis-klaar-voor-de-toekomst/',
   },
   {
     category: 'Wassen & Drogen',
@@ -98,7 +98,7 @@ export const blogHighlights = [
     excerpt: 'Houd je was netjes gesorteerd met een praktische dubbele wasmand.',
     image: '/images/wasmand.jpg',
     alt: 'Dubbele wasmand in wasruimte',
-    href: '/blog/zo-creeer-je-jouw-droominterieur-tips-woontrends-en-stylingadvies/',
+    href: '/zo-creeer-je-jouw-droominterieur-tips-woontrends-en-stylingadvies/',
   },
 ];
 
@@ -109,7 +109,7 @@ export const selectedArticles = [
     excerpt: 'Grondig schoonmaken van vloeren met een krachtige stoomreiniger.',
     image: '/images/cleaner.jpg',
     alt: 'Stoomreiniger voor vloer schoonmaken',
-    href: '/blog/zo-maak-jij-je-huis-klaar-voor-de-toekomst/',
+    href: '/zo-maak-jij-je-huis-klaar-voor-de-toekomst/',
   },
   {
     category: 'Wassen & Drogen',
@@ -117,7 +117,7 @@ export const selectedArticles = [
     excerpt: 'Een naadloos geïntegreerde wasmachine voor een strakke keuken of badkamer.',
     image: '/images/wasmachine.jpg',
     alt: 'Ingebouwde wasmachine in keuken',
-    href: '/blog/zo-creeer-je-jouw-droominterieur-tips-woontrends-en-stylingadvies/',
+    href: '/zo-creeer-je-jouw-droominterieur-tips-woontrends-en-stylingadvies/',
   },
   {
     category: 'Meubilair',
@@ -125,7 +125,7 @@ export const selectedArticles = [
     excerpt: 'Creëer een ontspannen hoekje met een stijlvolle hangstoel voor binnen.',
     image: '/images/listerby-coffee-table-oak-veneer__1022538_pe832796_s56.jpg',
     alt: 'Hangstoel in woonkamer interieur',
-    href: '/blog/zo-creeer-je-jouw-droominterieur-tips-woontrends-en-stylingadvies/',
+    href: '/zo-creeer-je-jouw-droominterieur-tips-woontrends-en-stylingadvies/',
   },
   {
     category: 'Verlichting',
@@ -133,7 +133,7 @@ export const selectedArticles = [
     excerpt: 'De perfecte hanglamp als eyecatcher boven je eettafel.',
     image: '/images/listerby-coffee-table-oak-veneer__1022538_pe832796_s57.jpg',
     alt: 'Hanglamp boven eettafel',
-    href: '/blog/wandsieraad-ophangen-stijlvolle-decoratie-voor-uw-interieur/',
+    href: '/wandsieraad-ophangen-stijlvolle-decoratie-voor-uw-interieur/',
   },
 ];
 

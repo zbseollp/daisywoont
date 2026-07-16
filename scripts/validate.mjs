@@ -67,7 +67,7 @@ for (const jsonFile of ['src/data/pages-from-wp.json', 'src/data/product-pages-f
 console.log(`WP content hotlinks in JSON: ${wpHotlinks.length}`);
 
 const nav = JSON.parse(fs.readFileSync(path.join(ROOT, 'src/data/nav-from-wp.json'), 'utf8'));
-const allPages = new Set(['/', '/blog/', '/blogs/', '/contact/', '/over-ons/']);
+const allPages = new Set(['/', '/blogs/', '/contact/', '/over-ons/']);
 for (const p of JSON.parse(fs.readFileSync(path.join(ROOT, 'src/data/pages-from-wp.json'), 'utf8'))) {
   allPages.add(`/${p.slug}/`);
 }
@@ -85,7 +85,7 @@ function normalizeHref(href) {
 
 const badNav = [];
 for (const item of nav) {
-  const href = item.label === 'Blogs' ? '/blog/' : normalizeHref(item.href);
+  const href = item.label === 'Blogs' ? '/blogs/' : normalizeHref(item.href);
   if (!allPages.has(href) && href !== '/') badNav.push(href);
   for (const child of item.children || []) {
     const chref = normalizeHref(child.href);

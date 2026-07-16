@@ -2,47 +2,54 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import pagesFromWp from '../../data/pages-from-wp.json';
+import PageHero from '../../components/PageHero.astro';
+import bodyHtml from '../../data/elementor/over-ons-body.html?raw';
 
-const page = pagesFromWp.find((p) => p.slug === 'over-ons');
-if (!page) throw new Error('Over ons page not found');
+const stylesheets = [
+  '/styles/elementor/epilogue.css',
+  '/styles/elementor/poppins.css',
+  '/styles/elementor/frontend.min.css',
+  '/styles/elementor/widget-image.min.css',
+  '/styles/elementor/widget-heading.min.css',
+  '/styles/elementor/widget-text-editor.min.css',
+  '/styles/elementor/post-335.css',
+  '/styles/elementor/post-645.css',
+];
 ---
 
 <Layout
   title="Over ons | DaisyWoont.nl"
   description="Leer het team van DaisyWoont.nl kennen. Wij delen woontips, productreviews en inspiratie voor jouw interieur."
+  bodyClass="elementor-kit-335 elementor-page elementor-page-645"
+  stylesheets={stylesheets}
 >
   <Header />
-  <main id="main" class="page-content section">
-    <div class="container wp-content" set:html={page.content} />
+  <main id="main" class="over-ons-page">
+    <PageHero
+      title="Over ons"
+      paragraphs={[
+        'Wij van DaisyWoont.nl bestaan uit een team van bloggers die zich bezighouden met al dat met de inrichting van je huis te maken heeft. Zo doen wij onderzoek naar leuke producten voor in huis, kiezen wij de beste daar van uit en schrijven we interessant blogs.',
+      ]}
+      imageAlt="Team van DaisyWoont.nl"
+    />
+
+    <div class="elementor elementor-645 over-ons-body">
+      <div class="elementor-bc-flex-widget" set:html={bodyHtml} />
+    </div>
   </main>
   <Footer />
 </Layout>
 
 <style>
-  .page-content .container {
-    max-width: 800px;
+  .over-ons-page {
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    margin: 0;
   }
 
-  .wp-content :global(h1) {
-    margin-bottom: 1.5rem;
-  }
-
-  .wp-content :global(p) {
-    line-height: 1.75;
-    margin-bottom: 1rem;
-    color: var(--color-muted);
-  }
-
-  .wp-content :global(img) {
-    border-radius: var(--radius);
-    margin-block: 2rem;
-    max-width: 100%;
+  .over-ons-body :global(img) {
     height: auto;
-  }
-
-  .wp-content :global(a) {
-    color: var(--color-accent);
-    text-decoration: underline;
+    max-width: 100%;
   }
 </style>

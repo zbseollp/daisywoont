@@ -82,7 +82,7 @@ async function main() {
 
   const priority = [
     '/',
-    '/blog/',
+    '/blogs/',
     '/over-ons/',
     '/contact/',
     '/sitemap/',

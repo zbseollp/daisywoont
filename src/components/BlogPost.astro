@@ -1,16 +1,12 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
-import { getCollection, render } from 'astro:content';
-import { formatDate } from '../../utils/format';
+import Layout from '../layouts/Layout.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { formatDate } from '../utils/format';
 
-export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  return posts.map((post) => ({
-    params: { slug: post.id },
-    props: { post },
-  }));
+interface Props {
+  post: CollectionEntry<'blog'>;
 }
 
 const { post } = Astro.props;
@@ -20,6 +16,21 @@ const allPosts = (await getCollection('blog')).sort(
 );
 const relatedPosts = allPosts.filter((p) => p.id !== post.id).slice(0, 3);
 const featuredImage = post.data.featuredImage;
+
+function imageKey(src: string): string {
+  const name = src.split('/').pop()?.split('?')[0] ?? src;
+  return name
+    .replace(/-\d+x\d+(?=\.[^.]+$)/, '')
+    .replace(/-scaled(?=\.[^.]+$)/, '')
+    .toLowerCase();
+}
+
+const bodyImageSrcs = [...post.body.matchAll(/\bsrc=["']([^"']+)["']/gi)].map((m) => m[1]);
+const leadImageMatchesFeatured = Boolean(
+  featuredImage &&
+    bodyImageSrcs[0] &&
+    (bodyImageSrcs[0] === featuredImage || imageKey(bodyImageSrcs[0]) === imageKey(featuredImage))
+);
 ---
 
 <Layout title={`${post.data.title} | DaisyWoont.nl`} description={post.data.description}>
@@ -48,7 +59,7 @@ const featuredImage = post.data.featuredImage;
         )
       }
 
-      <div class="post__content section">
+      <div class:list={['post__content', 'section', leadImageMatchesFeatured && 'post__content--dedupe-lead']}>
         <div class="container wp-content">
           <Content />
 
@@ -71,7 +82,7 @@ const featuredImage = post.data.featuredImage;
           {
             relatedPosts.map((related) => (
               <article class="related-card">
-                <a href={`/blog/${related.id}/`}>
+                <a href={`/${related.id}/`}>
                   {related.data.featuredImage && (
                     <div class="related-card__image">
                       <img
@@ -147,6 +158,12 @@ const featuredImage = post.data.featuredImage;
 
   .wp-content :global(figure) {
     margin: 1.5rem 0;
+  }
+
+  .post__content--dedupe-lead :global(.wp-content > figure:first-child),
+  .post__content--dedupe-lead :global(.wp-content > .wp-block-image:first-child),
+  .post__content--dedupe-lead :global(.wp-content > p:first-child:has(> img:only-child)) {
+    display: none;
   }
 
   .post__author {

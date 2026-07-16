@@ -10,22 +10,37 @@ import {
 } from '../data/footer-links';
 
 const year = new Date().getFullYear();
+
+const socialIcons: Record<string, string> = {
+  Facebook:
+    'M22 12a10 10 0 1 0-11.5 9.9v-7H8v-3h2.5V9.5c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.5V12H16l-.4 3h-2.3v7A10 10 0 0 0 22 12z',
+  Instagram:
+    'M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm6.5-.9a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z',
+  Twitter:
+    'M18.9 2H21l-6.5 7.4L22 22h-6.1l-4.8-6.3L5.5 22H3.4l7-8L2 2h6.3l4.3 5.7L18.9 2zm-1.1 18h1.7L6.3 3.9H4.5L17.8 20z',
+  YouTube:
+    'M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6a3 3 0 0 0-2.1 2.1A31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.8 15.5v-7l6.2 3.5-6.2 3.5z',
+};
 ---
 
 <footer class="footer">
-  <div class="container footer__grid">
+  <div class="footer__inner">
     <div class="footer__brand">
-      <a href="/" aria-label="DaisyWoont.nl home">
-        <img src="/images/Frame-233.svg" alt="DaisyWoont.nl logo" width="103" height="33" />
+      <a href="/" class="footer__logo" aria-label="DaisyWoont.nl home">
+        <img src="/images/Frame-233-1.svg" alt="DaisyWoont.nl logo" width="103" height="33" />
       </a>
       <p>{footerBrand.description}</p>
       <a href="/sitemap/" class="footer__sitemap">Sitemap</a>
       <div class="footer__social">
-        {footerSocial.map((s) => (
-          <a href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label}>
-            {s.label}
-          </a>
-        ))}
+        {
+          footerSocial.map((s) => (
+            <a href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label}>
+              <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+                <path d={socialIcons[s.label]} fill="currentColor" />
+              </svg>
+            </a>
+          ))
+        }
       </div>
       <p class="footer__copy">&copy; {year} All rights reserved</p>
     </div>
@@ -81,64 +96,75 @@ const year = new Date().getFullYear();
 
 <style>
   .footer {
-    background: var(--color-primary);
-    color: rgba(255, 255, 255, 0.85);
-    padding: 3rem 0 2rem;
+    background: #000;
+    color: #fff;
+    padding: 3.5rem 0 2.5rem;
   }
 
-  .footer__grid {
+  .footer__inner {
+    width: min(100% - 2rem, 1280px);
+    margin-inline: auto;
     display: grid;
-    gap: 2rem;
+    gap: 2.5rem 1.75rem;
     grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .footer__logo img {
+    height: 33px;
+    width: auto;
+    display: block;
   }
 
   .footer__brand p {
-    margin-top: 1rem;
+    margin-top: 1.25rem;
     font-size: 0.875rem;
-    max-width: 340px;
-    color: rgba(255, 255, 255, 0.7);
-    line-height: 1.6;
+    max-width: 280px;
+    color: #fff;
+    line-height: 1.65;
   }
 
   .footer__sitemap {
     display: inline-block;
     margin-top: 1rem;
     font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .footer__sitemap:hover {
     text-decoration: underline;
   }
 
   .footer__social {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 1rem;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.25rem;
   }
 
   .footer__social a {
-    font-size: 0.75rem;
-    padding: 0.35rem 0.65rem;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: 999px;
-    color: rgba(255, 255, 255, 0.85);
-    transition: background var(--transition), color var(--transition);
+    display: flex;
+    color: #fff;
+    transition: opacity var(--transition);
   }
 
   .footer__social a:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--color-secondary);
+    opacity: 0.7;
   }
 
   .footer__copy {
-    margin-top: 1rem !important;
+    margin-top: 1.5rem !important;
     font-size: 0.8125rem !important;
-    color: rgba(255, 255, 255, 0.5) !important;
+    color: rgba(255, 255, 255, 0.55) !important;
   }
 
   .footer__col h3 {
     color: #fff;
-    font-size: 0.9375rem;
-    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 1.25rem;
+    line-height: 1.3;
   }
 
   .footer__col ul {
@@ -146,29 +172,50 @@ const year = new Date().getFullYear();
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 0.45rem;
+    gap: 0.75rem;
   }
 
   .footer__col a {
-    font-size: 0.8125rem;
-    color: rgba(255, 255, 255, 0.7);
-    line-height: 1.4;
-    transition: color var(--transition);
+    font-size: 0.875rem;
+    color: #fff;
+    line-height: 1.45;
+    text-decoration: none;
+    transition: opacity var(--transition);
   }
 
   .footer__col a:hover {
-    color: var(--color-secondary);
+    opacity: 0.7;
   }
 
-  @media (min-width: 768px) {
-    .footer__grid {
+  @media (min-width: 640px) {
+    .footer__inner {
       grid-template-columns: repeat(2, 1fr);
+    }
+
+    .footer__brand {
+      grid-column: 1 / -1;
     }
   }
 
-  @media (min-width: 1024px) {
-    .footer__grid {
-      grid-template-columns: 1.4fr repeat(5, 1fr);
+  @media (min-width: 900px) {
+    .footer__inner {
+      grid-template-columns: 1.35fr repeat(3, 1fr);
+    }
+
+    .footer__brand {
+      grid-column: auto;
+      grid-row: 1 / span 2;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .footer__inner {
+      grid-template-columns: 1.45fr repeat(5, minmax(0, 1fr));
+      gap: 2rem 1.5rem;
+    }
+
+    .footer__brand {
+      grid-row: auto;
     }
   }
 </style>

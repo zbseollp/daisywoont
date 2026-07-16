@@ -222,7 +222,14 @@ const currentPath = Astro.url.pathname;
     }
 
     .nav__subtoggle {
-      display: none;
+      display: inline-flex;
+      width: auto;
+      height: auto;
+      padding: 0;
+      margin-left: -0.35rem;
+      margin-right: 0.35rem;
+      color: currentColor;
+      pointer-events: none;
     }
 
     .nav__list {
@@ -244,12 +251,18 @@ const currentPath = Astro.url.pathname;
     }
 
     .nav__row {
-      display: contents;
+      display: flex;
+      align-items: center;
+      gap: 0.15rem;
     }
 
     .nav__link {
       padding: 0.5rem 0.75rem;
       white-space: nowrap;
+    }
+
+    .nav__item--has-children .nav__link {
+      padding-right: 0.25rem;
     }
 
     .nav__dropdown {

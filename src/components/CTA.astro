@@ -1,19 +1,18 @@
 ---
-interface PostLink {
-  slug: string;
-  title: string;
-}
-
-interface Props {
-  posts: PostLink[];
-}
-
-const { posts } = Astro.props;
 ---
 
-<section class="cta section" id="over-ons" aria-labelledby="cta-title">
-  <div class="container cta__grid">
-    <div class="cta__content">
+<section class="about-daisy section" id="over-ons" aria-labelledby="cta-title">
+  <div class="container about-daisy__grid">
+    <div class="about-daisy__image">
+      <img
+        src="/images/hero-woman-round-glasses.png"
+        alt="Daisy, interieurblogger van DaisyWoont"
+        width="479"
+        height="504"
+        loading="lazy"
+      />
+    </div>
+    <div class="about-daisy__content">
       <h2 id="cta-title">Beter wonen met Daisy</h2>
       <p>
         Bij ons van DaisyWoont.nl kun je inspiratie opdoen voor jouw interieur. Of je nu op zoek bent
@@ -21,79 +20,51 @@ const { posts } = Astro.props;
         Wij helpen jou bij het uitkiezen van hip interieur, zodat jij je eigen comfortabele plekje
         kunt realiseren.
       </p>
-      <div class="cta__actions">
-        <a href="/blog/" class="btn btn-primary">Ontdek onze blogs</a>
-        <a href="/contact/" class="btn btn-outline">Neem contact op</a>
-      </div>
-
-      <ul class="cta__links">
-        {
-          posts.map((post) => (
-            <li>
-              <a href={`/blog/${post.slug}/`}>{post.title}</a>
-            </li>
-          ))
-        }
-      </ul>
     </div>
   </div>
 </section>
 
 <style>
-  .cta {
-    background: var(--color-primary);
-    color: #fff;
+  .about-daisy {
+    background: var(--color-bg-soft);
   }
 
-  .cta h2 {
-    color: #fff;
-  }
-
-  .cta__content p {
-    color: rgba(255, 255, 255, 0.85);
-    max-width: 600px;
-  }
-
-  .cta__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-
-  .cta .btn-primary {
-    background: var(--color-secondary);
-    color: var(--color-primary);
-  }
-
-  .cta .btn-outline {
-    border-color: #fff;
-    color: #fff;
-  }
-
-  .cta .btn-outline:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .cta__links {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .about-daisy__grid {
     display: grid;
-    gap: 0.5rem;
+    gap: 2rem;
+    align-items: center;
   }
 
-  .cta__links a {
-    display: block;
-    padding: 0.625rem 0;
-    font-size: 0.875rem;
-    color: var(--color-secondary);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-    transition: color var(--transition), padding-left var(--transition);
+  .about-daisy__image {
+    display: flex;
+    justify-content: center;
   }
 
-  .cta__links a:hover {
-    color: #fff;
-    padding-left: 0.5rem;
+  .about-daisy__image img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .about-daisy__content h2 {
+    margin-bottom: 1rem;
+  }
+
+  .about-daisy__content p {
+    color: var(--color-muted);
+    font-size: 1.0625rem;
+    max-width: 540px;
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .about-daisy__grid {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 3rem;
+    }
+
+    .about-daisy__image {
+      justify-content: flex-start;
+    }
   }
 </style>

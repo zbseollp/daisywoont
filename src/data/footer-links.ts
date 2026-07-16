@@ -5,7 +5,7 @@ export const footerBrand = {
 
 export const footerInfo = [
   { label: 'Home', href: '/' },
-  { label: 'Blog', href: '/blog/' },
+  { label: 'Blog', href: '/blogs/' },
   { label: 'Over ons', href: '/over-ons/' },
   { label: 'Contact', href: '/contact/' },
 ];
@@ -13,23 +13,23 @@ export const footerInfo = [
 export const footerArticles = [
   {
     label: 'Waar let je op bij de aanleg van een zwembad in eigen tuin?',
-    href: '/blog/waar-let-je-op-bij-de-aanleg-van-een-zwembad-in-eigen-tuin/',
+    href: '/waar-let-je-op-bij-de-aanleg-van-een-zwembad-in-eigen-tuin/',
   },
   {
     label: 'Kunstgras kiezen voor je tuin: waarom stalen vergelijken essentieel is',
-    href: '/blog/kunstgras-kiezen-voor-je-tuin-waarom-stalen-vergelijken-essentieel-is/',
+    href: '/kunstgras-kiezen-voor-je-tuin-waarom-stalen-vergelijken-essentieel-is/',
   },
   {
     label: 'Zo creëer je jouw droominterieur: tips, woontrends en stylingadvies',
-    href: '/blog/zo-creeer-je-jouw-droominterieur-tips-woontrends-en-stylingadvies/',
+    href: '/zo-creeer-je-jouw-droominterieur-tips-woontrends-en-stylingadvies/',
   },
   {
     label: 'Zo maak jij je huis klaar voor de toekomst',
-    href: '/blog/zo-maak-jij-je-huis-klaar-voor-de-toekomst/',
+    href: '/zo-maak-jij-je-huis-klaar-voor-de-toekomst/',
   },
   {
     label: 'Wandsieraad ophangen: stijlvolle decoratie voor uw interieur',
-    href: '/blog/wandsieraad-ophangen-stijlvolle-decoratie-voor-uw-interieur/',
+    href: '/wandsieraad-ophangen-stijlvolle-decoratie-voor-uw-interieur/',
   },
 ];
 
@@ -61,7 +61,6 @@ export const footerDaisySites = [
   { label: 'Daisytuiniert.nl', href: 'https://daisytuiniert.nl' },
   { label: 'OutdoorDaisy.nl', href: 'https://outdoordaisy.nl' },
   { label: 'DaisyVerbouwt.nl', href: 'https://daisyverbouwt.nl' },
-  { label: 'LifestyleDaisy.nl', href: 'https://lifestyledaisy.nl' },
 ];
 
 export const footerSocial = [
