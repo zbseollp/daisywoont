@@ -2,10 +2,10 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { getCollection } from 'astro:content';
 import { formatDate } from '../../utils/format';
+import { getPublishedPosts } from '../../utils/posts';
 
-const posts = (await getCollection('blog')).sort(
+const posts = (await getPublishedPosts()).sort(
   (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
 );
 ---

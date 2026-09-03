@@ -2,11 +2,11 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { getCollection } from 'astro:content';
+import { getPublishedPosts } from '../../utils/posts';
 import productPagesFromWp from '../../data/product-pages-from-wp.json';
 import categories from '../../data/categories.json';
 
-const posts = await getCollection('blog');
+const posts = await getPublishedPosts();
 
 const mainPages = [
   { label: 'Home', href: '/', hint: 'Startpagina' },

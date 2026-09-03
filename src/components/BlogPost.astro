@@ -2,8 +2,9 @@
 import Layout from '../layouts/Layout.astro';
 import Header from './Header.astro';
 import Footer from './Footer.astro';
-import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { render, type CollectionEntry } from 'astro:content';
 import { formatDate } from '../utils/format';
+import { getPublishedPosts } from '../utils/posts';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -11,7 +12,7 @@ interface Props {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
-const allPosts = (await getCollection('blog')).sort(
+const allPosts = (await getPublishedPosts()).sort(
   (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
 );
 const relatedPosts = allPosts.filter((p) => p.id !== post.id).slice(0, 3);
